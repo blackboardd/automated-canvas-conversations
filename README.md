@@ -22,4 +22,11 @@ Run the below command into any folder.
 git clone https://github.com/blackboardd/automated-canvas-conversations.git
 ```
 
+Do not forget to export your access token in ~/.bashrc.
+
+## Troubleshooting
+
+### Help, my messages aren't sending!
+See what is happening in info.log
+
 ![example of usage in a terminal shell](/imgs/term_example.png)

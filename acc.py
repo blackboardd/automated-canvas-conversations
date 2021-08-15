@@ -28,7 +28,7 @@ try:
     token = os.environ["CANVAS_HEADER_AUTH_TOKEN"]
 except KeyError:
     print(
-"""Missing Canvas token. use %sCANVAS_HEADER_AUTH_TOKEN="Bearer [YOUR TOKEN]"; export CANVAS_HEADER_AUTH_TOKEN%s in your shell config file or system environment
+"""Missing Canvas token. use %sCANVAS_HEADER_AUTH_TOKEN="Bearer [YOUR TOKEN]"; export CANVAS_HEADER_AUTH_TOKEN%s in your ~/.bashrc file
 
 Don't know where your token is? Follow this guide to get it:
 Student: https://community.canvaslms.com/t5/Student-Guide/How-do-I-manage-API-access-tokens-as-a-student/ta-p/273
