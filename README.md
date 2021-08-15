@@ -19,7 +19,7 @@ pip install python-crontab colored argparse requests inquirer
 Run the below command into any folder.
 
 ```
-git clone https://github.com/blackboardd/automated-canvas-conversations/.git
+git clone https://github.com/blackboardd/automated-canvas-conversations.git
 ```
 
 ![example of usage in a terminal shell](/imgs/term_example.png)
