@@ -142,7 +142,10 @@ def myList():
         if (crons):
             print("Columns in cron:")
             for cron in crons:
-                print(cron)
+                b64cron = str(cron).encode("ascii")
+                b64cron = base64.b64decode(b64cron)
+                b64cron = b64cron.decode("ascii")
+                print(b64cron)
         else:
             print("No jobs in database.")
         return
@@ -232,7 +235,7 @@ def schedule():
         if (selectedMsgID):
             cron_job(selectedMsgID)
         else:
-            print("%sNo messages in database." % fg("white"))
+            print("%sNo IDs in database." % fg("white"))
     else:
         print("%sNo ids in database. Start by calling '%spython3 acc.py add%s' in order to begin sending." % (fg("white"), fg("yellow"), fg("white")))
     
@@ -291,7 +294,7 @@ def cron_job(smid):
     b64job = b64job.decode("ascii")
 
     cur.execute("INSERT INTO cron (cronline) VALUES (?)", (b64job,))
-    print("%sAdded cron job %s{}%s".format(b64job) % (fg("white"), fg("cyan"), fg("white")))
+    print("%sAdded cron job %s{}%s".format(job) % (fg("white"), fg("cyan"), fg("white")))
 
 def cron_run():
     smid = list(zip(args.msgs, args.ids))
