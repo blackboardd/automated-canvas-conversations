@@ -2,7 +2,7 @@
 
 This is a small CLI application that allows you to append messages to existing conversation threads on Instructure Canvas as well as schedule them using crontab.
 
-![example](/imgs/canvas_example.png)
+![example of usage in Canvas](/imgs/canvas_example.png)
 
 ## Compatability
 
@@ -22,3 +22,4 @@ Run the below command into any folder.
 git clone https://github.com/blackboardd/automated-canvas-conversations/.git
 ```
 
+![example of usage in a terminal shell](/imgs/term_example.png)
