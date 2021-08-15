@@ -19,7 +19,7 @@ parser.add_argument("--msgs", nargs="+")
 parser.add_argument("--ids", nargs="+")
 args = parser.parse_args()
 
-con = sqlite3.connect('acm.db')
+con = sqlite3.connect('acc.db')
 cur = con.cursor()
 
 cronroot = CronTab(user="root")
@@ -234,13 +234,13 @@ def schedule():
         else:
             print("%sNo messages in database." % fg("white"))
     else:
-        print("%sNo ids in database. Start by calling '%spython3 acm.py add%s' in order to begin sending." % (fg("white"), fg("yellow"), fg("white")))
+        print("%sNo ids in database. Start by calling '%spython3 acc.py add%s' in order to begin sending." % (fg("white"), fg("yellow"), fg("white")))
     
 def cron_job(smid):
     msgs = re.sub(r"[\[\(\)\],]", "", str(list(zip((msg[0] for msg in smid)))))
     ids = re.sub(r"[\[\(\)\],]", "", str(list(zip((id[1] for id in smid)))))
     
-    job = cronroot.new(command="cd {} && sh acm.sh --msgs {} --ids {}".format(os.getcwd(), msgs, ids))
+    job = cronroot.new(command="cd {} && sh acc.sh --msgs {} --ids {}".format(os.getcwd(), msgs, ids))
 
     job.minute.on(0)
     
