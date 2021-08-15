@@ -13,8 +13,8 @@ import os
 import re
 
 parser = argparse.ArgumentParser(description="Work with Canvas conversations.")
-parser.add_argument("selection", choices=["send", "add", "list", "remove", "schedule", "sched", "run"])
-parser.add_argument("--type", choices=["job"])
+parser.add_argument("selection", choices=["send", "add", "list", "remove", "schedule", "sched", "run", "token"])
+parser.add_argument("-t", "--type", choices=["job"])
 parser.add_argument("--msgs", nargs="+")
 parser.add_argument("--ids", nargs="+")
 args = parser.parse_args()
@@ -24,7 +24,17 @@ cur = con.cursor()
 
 cronroot = CronTab(user="root")
 
-token = os.environ["CANVAS_HEADER_AUTH_TOKEN"]
+try:
+    token = os.environ["CANVAS_HEADER_AUTH_TOKEN"]
+except KeyError:
+    print(
+"""Missing Canvas token. use %s$ env CANVAS_HEADER_AUTH_TOKEN=[YOUR TOKEN]%s
+
+Don't know where your token is? Follow this guide to get it:
+Student: https://community.canvaslms.com/t5/Student-Guide/How-do-I-manage-API-access-tokens-as-a-student/ta-p/273
+Admin:   https://community.canvaslms.com/t5/Admin-Guide/How-do-I-manage-API-access-tokens-as-an-admin/ta-p/89""" \
+                     % (fg("yellow"), fg("white")))
+    exit()
 
 baseURL = "https://canvas.instructure.com"
 conversationsURL ="api/v1/conversations"
