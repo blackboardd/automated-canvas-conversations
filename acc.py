@@ -1,6 +1,8 @@
+from dotenv import dotenv_values
 from crontab import CronTab
 from colored import fg
-from dataclasses import dataclass
+from pathlib import Path
+import platform
 import argparse
 import requests
 import inquirer
@@ -13,7 +15,71 @@ import sys
 import os
 import re
 
-parser = argparse.ArgumentParser(description="Work with Canvas conversations.")
+@dataclass
+class User:
+    """
+    A data class used to represent user data
+
+    ...
+
+    Attributes
+    ----------
+    says_str : str
+        a formatted string to print out what the animal says
+    name : str
+        the name of the animal
+    sound : str
+        the sound that the animal makes
+    num_legs : int
+        the number of legs the animal has (default 4)
+
+    Methods
+    -------
+    says(sound=None)
+        Prints the animals name and what sound it makes
+    """
+
+    os = platform.system()
+    
+    if user.os == "Linux":
+        ospath = dict(shared="~/.local/share/automated-canvas-conversations")
+    else:
+        ospath = dict(shared="")
+
+    path = dict(db="acc.db", env=".env")
+
+user = User
+
+setup()
+
+def no_init():
+    if os.path.exists(user.path.get("shared")): return true
+    return false
+
+def setup():
+    if no_init(): init()
+    update()
+    root_conf = dotenv_values(".env")
+    user_conf = dotenv_values("{}/{}.format(user.ospath.get("shared"), \
+            user.path.get("env"))
+
+def init():
+    path = Path(user.ospath.get("shared"))
+    path.mkdir(parents=True, exist_ok=True)
+
+def update():
+    update_db()
+    update_env()
+
+def update_db():
+    check_db_version()
+
+def check_db_version():
+    
+
+parser = argparse.ArgumentParser(
+            description="Work with Canvas conversations."
+         )
 parser.add_argument(
     "selection",
     choices=[
@@ -39,42 +105,33 @@ cur = con.cursor()
 cronroot = CronTab(user=True)
 
 try:
-    token = os.environ["CANVAS_HEADER_AUTH_TOKEN"]
+    token = user_conf.get("TOKEN")
 except KeyError:
-    print(
-        """Missing Canvas token. use %sCANVAS_HEADER_AUTH_TOKEN="[YOUR \
-TOKEN]"; export CANVAS_HEADER_AUTH_TOKEN%s in your ~/.bashrc file
-
-Don't know where your token is? Follow this guide to get it:
-Student: https://bit.ly/3jdtpXw
-Admin:   https://bit.ly/3yiq3qw"""
-        % (fg("yellow"), fg("white"))
-    )
-    exit()
+    token()
 
 @dataclass
 class Url:
     base = "https://canvas.instructure.com/api/v1"
     convo = "conversations"
     course = "courses"
-    addMsg = "add_message"
+    add_msg = "add_message"
     scope = "?scope"
-    scopeDict = dict(sent="sent")
+    scope_dict = dict(sent="sent")
 
-    def addMsg(id, body):
-        return "{}/{}?body={}".format(id[0], addMsg, body)
+    def add_msg(id, body):
+        return "{}/{}?body={}".format(id[0], add_msg, body)
 
 url = Url
 
 # colors
 
-sendColor = "magenta"
+send_colo = "magenta"
 
 auth = {"Authorization": "Bearer {}".format(token)}
 
-sendStr = "%sSent a message to %s{} %susing %s{}%s".format(id[0], msg) \
-        % (fg("white"), fg(sendColor), fg("white"), fg(sendColor), fg("white"))
-integrityErr = "%sIntegrity Error. %sA duplicate ID was found; \
+send_str = "%sSent a message to %s{} %susing %s{}%s".format(id[0], msg) \
+        % (fg("white"), fg(send_colo), fg("white"), fg(send_colo), fg("white"))
+integrity_err = "%sIntegrity Error. %sA duplicate ID was found; \
                 cannot add %s{}%s with %s{}".format(
                     id[0], id[1]
                 ) \
@@ -86,54 +143,54 @@ integrityErr = "%sIntegrity Error. %sA duplicate ID was found; \
                     fg("cyan"),
                 )
 
-def noFolders(f):
+def no_folders(f):
     if not f:
         print("No .txt files in current directory.")
         return true
     return false
 
-def noIds(ids):
+def no_ids(ids):
     if not ids:
         print("No IDs in database.")
         return true
     return false
 
-def noSent(c):
+def no_sent(c):
     if not c:
         print("No existing sent conversations.")
         return true
     return false
 
 
-def noDays(days):
+def no_days(days):
     if not days:
         print("No day selected. Will run every day.")
         return true
     return false
 
 
-def noHours(hours):
+def no_hours(hours):
     if not hours:
         print("No hour selected. Will run every hour.")
         return true
     return false
 
 
-def noSelected(sids):
+def no_selected(sids):
     if not sids:
         print("None selected.")
         return true
     return false
 
 
-def noCrons(crons):
+def no_crons(crons):
     if not crons:
         print("No jobs in database.")
         return true
     return false
 
 
-def createMsgPrompt(f):
+def create_msg_prompt(f):
     return [
         inquirer.List(
             "Messages",
@@ -144,7 +201,7 @@ def createMsgPrompt(f):
     ]
 
 
-def createIdPrompt(zip, msg, title):
+def create_id_prompt(zip, msg, title):
     return [
         inquirer.Checkbox(
             title,
@@ -154,13 +211,13 @@ def createIdPrompt(zip, msg, title):
     ]
 
 
-def createSendIdPrompt(ids, lms):
+def create_send_id_prompt(ids, lms):
     return [
         inquirer.Checkbox(
         ),
     ]
 
-def createCcPrompt(ccs, ids):
+def create_cc_prompt(ccs, ids):
     ccPrompt = [
         inquirer.Checkbox(
             "Courses",
@@ -170,7 +227,7 @@ def createCcPrompt(ccs, ids):
         ),
     ]
 
-def createCronDayPrompt(weekdays):
+def create_cron_day_prompt(weekdays):
     return [
         inquirer.Checkbox(
             "Weekdays",
@@ -180,7 +237,7 @@ def createCronDayPrompt(weekdays):
     ]
 
 
-def createCronHourPrompt(hours, ampm):
+def create_cron_hour_prompt(hours, ampm):
     return [
         inquirer.Checkbox(
             "Hours",
@@ -189,7 +246,7 @@ def createCronHourPrompt(hours, ampm):
         ),
     ]
 
-def createCronPrompt(crons):
+def create_cron_prompt(crons):
     return [
             inquirer.Checkbox(
             "Cron jobs",
@@ -198,7 +255,7 @@ def createCronPrompt(crons):
         ),
     ]
 
-def insertId(id):
+def insert_id(id):
     try:
         cur.execute("INSERT INTO ids (id) VALUES (?)", (id[0],))
         print(
@@ -206,24 +263,24 @@ def insertId(id):
             % (fg("white"), fg("cyan"), fg("white"), fg("cyan"))
         )
     except sqlite3.IntegrityError:
-        print(integrityErr)
+        print(integrity_err)
 
-def insertCron(job):
+def insert_cron(job):
     cur.execute("INSERT INTO cron (cronline) VALUES (?)", (encode(job),))
     print(
         "%sAdded cron job %s{}%s".format(job) % (fg("white"), \
             fg("cyan"), fg("white"))
     )
 
-def fetchCrons():
+def fetch_crons():
     cur.execute("SELECT * FROM cron")
     cur.fetchall()
 
-def fetchIds():
+def fetch_ids():
     cur.execute("SELECT * FROM ids")
     cur.fetchall()
 
-def checkPrompt(prompt, name):
+def check_prompt(prompt, name):
     try:
         return inquirer.prompt(prompt)[name]
     except TypeError:
@@ -244,16 +301,16 @@ def get(u, h):
 
 def send(post = True):
     folders = glob.glob("./*.txt")
-    if noFolders(folders): return
+    if no_folders(folders): return
     lms = []
-    returnTuple = []
-    ids = fetchIds()
-    if noIds(ids): return
+    return_tuple = []
+    ids = fetch_ids()
+    if no_ids(ids): return
 
-    body = open(checkPrompt(createMsgPrompt(folders), "Messages")).read()
+    body = open(check_prompt(create_msg_prompt(folders), "Messages")).read()
 
     for id in ids:
-        lms.append(getLm(id))
+        lms.append(getlm(id))
 
 
     title = "Conversations"
@@ -261,96 +318,96 @@ def send(post = True):
             to (use spacebar to select)"
     zip = zip(["{}: {}".format(id[0], lm) for id, \
             lm in zip(ids, lms)], ids)
-    sIds = checkPrompt(createIdPrompt(zip, msg, title), "Conversations")
-    if noSelected(sIds): return
+    s_ids = check_prompt(create_id_prompt(zip, msg, title), "Conversations")
+    if no_selected(s_ids): return
 
-    for id in sIds:
-        _url = "{}/{}".format(url.base, url.addMsg(id, body))
+    for id in s_ids:
+        _url = "{}/{}".format(url.base, url.add_msg(id, body))
         if post: r = post(_url, auth)
-        print(sendStr, r, url)
-        returnTuple.append((msg, id[0]))
-    return returnTuple
+        print(send_str, r, url)
+        return_tuple.append((msg, id[0]))
+    return return_tuple
 
 
 def compose(sched=False):
-    courseCodes = []
+    course_codes = []
     ids = []
 
     for _ in get("{}/{}".format(url.base, url.course), auth):
-        courseCode = _["course_code"]
+        course_code = _["course_code"]
         id = _["id"]
-        courseCodes.append(courseCode)
+        course_codes.append(course_code)
         ids.append(id)
 
-    ccs = checkPrompt(createCcPrompt(zip(courseCodes, ids)))
+    ccs = check_prompt(create_cc_prompt(zip(course_codes, ids)))
 
 def add(sched=False):
     ids = []
     lms = []
 
     for _ in get("{}/{}={}".format(url.base, url.scope,
-                            scopeDict.get("sent")), auth):
+                            scope_dict.get("sent")), auth):
         ids.append(str(_["id"]))
-        lms.append(getLm(id), _)
+        lms.append(getlm(id), _)
 
     convos = list(zip(ids, lms))
-    if noSent(convos): return
+    if no_sent(convos): return
 
     title = "Conversations"
     msg = "Select a thread to add (spacebar to select)"
     zip = zip(lms, convos)
-    sIds = checkPrompt(createIdPrompt(zip, msg, title), title)
+    s_ids = check_prompt(create_id_prompt(zip, msg, title), title)
 
-    if noSelected(sIds): return
-    for id in sIds:
-        insertId(id)
+    if no_selected(s_ids): return
+    for id in s_ids:
+        insert_id(id)
 
 
-def listIds():
-    ids = fetchIds()
-    if noIds(ids): return
+def list_ids():
+    ids = fetch_ids()
+    if no_ids(ids): return
     print("Columns in IDs:")
     for id in ids: print(id)
 
 
-def listJobs():
-    ecrons = fetchCrons()
-    if noCrons(ecrons): return
+def list_jobs():
+    ecrons = fetch_crons()
+    if no_crons(ecrons): return
     print("Columns in cron:")
     for _ in ecrons: print(decode(str(_)))
 
 
-def removeJobs():
-    ecrons = fetchCrons()
+def remove_jobs():
+    ecrons = fetch_crons()
     crons = {}
 
-    if noCrons(ecrons): return
+    if no_crons(ecrons): return
     for _ in ecrons: crons[decode(_[0])] = _[0]
 
-    scrons = checkPrompt(createCronPrompt(crons), "Cron jobs")
+    scrons = check_prompt(create_cron_prompt(crons), "Cron jobs")
 
-    if noSelected(scrons): return
-    for _ in scrons: removeCron(_, crons)
+    if no_selected(scrons): return
+    for _ in scrons: remove_cron(_, crons)
 
 
-def removeIds():
-    ids = fetchIds()
+def remove_ids():
+    ids = fetch_ids()
     lms = []
 
-    for id in ids: lms.append(getLm(id))
+    for id in ids: lms.append(getlm(id))
 
-    if noIds(ids): return
+    if no_ids(ids): return
 
     title = "Conversations"
     msg = "Select threads to remove (use spacebar to select)"
     zip = zip(["{}: {}".format(id[0], lm) for id, lm in zip(ids, lms)], ids)
-    sIds = checkPrompt(createIdPrompt(zip, msg, title), title)
+    s_ids = check_prompt(create_id_prompt(zip, msg, title), title)
 
-    if noSelected(sIds): return
-    for _ in sIds: removeId(_)
+    if no_selected(s_ids): return
+    for _ in s_ids: remove_id(_)
 
 
-def removeCron(cron, crons):
+def remove_cron(cron, crons):
     cur.execute("DELETE FROM cron WHERE cronline = ?", (crons[cron],))
     for job in cronroot:
         if str(job) == str(cron):
@@ -362,7 +419,7 @@ def removeCron(cron, crons):
     )
 
 
-def removeId(id):
+def remove_id(id):
     cur.execute("DELETE FROM ids WHERE id = ?", (id[0],))
     print(
         "%sRemoved %s{}%s".format(id[0])
@@ -371,59 +428,59 @@ def removeId(id):
 
 
 def schedule():
-    ids = fetchIds()
-    if noIds(ids): return
+    ids = fetch_ids()
+    if no_ids(ids): return
 
-    msgIds = send(False)
-    if noIds(msgIds): return
+    msg_ids = send(False)
+    if no_ids(msg_ids): return
 
-    cron_job(msgIds)
+    cron_job(msg_ids)
 
 def cron_job(tasks):
-    cronCmd = "cd {} && sh acc.sh --msgs {} \
+    cron_cmd = "cd {} && sh acc.sh --msgs {} \
     --ids {}".format(os.getcwd(), msgs, ids)
-    taskRgx = r"[\[\(\)\],]"
+    task_regex = r"[\[\(\)\],]"
     msgs = str(list(zip((msg[0] for msg in tasks))))
-    msgs = re.sub(taskRgx, "", msgs)
+    msgs = re.sub(task_regex, "", msgs)
 
     ids = str(list(zip((id[1] for id in tasks))))
-    ids = re.sub(taskRgx, "", ids)
+    ids = re.sub(task_regex, "", ids)
 
-    job = cronroot.new(command=cronCmd)
+    job = cronroot.new(command=cron_cmd)
     job.minute.on(0)
 
     weekdays = [ "Sunday", "Monday", "Tuesday", "Wednesday",
         "Thursday", "Friday", "Saturday" ]
-    weekdaysList = list(zip(weekdays, range(len(weekdays))))
+    weekdays_list = list(zip(weekdays, range(len(weekdays))))
 
-    sDays = checkPrompt(createCronDayPrompt(weekdaysList), "Weekdays")
-    if noDays(sDays): return
+    s_days = check_prompt(create_cron_day_prompt(weekdays_list), "Weekdays")
+    if no_days(s_days): return
 
-    for _ in sDays: job.dow.also.on(_)
+    for _ in s_days: job.dow.also.on(_)
 
-    hours = [*range(24)]
-    ampm = map(lambda h: h = "{}{}".format((h + 1 if h < 12 else h + 1 - 12), \
-        ("am" if h < 12 else "pm")), hours)
+    hours = [*range(1, 25, 1)]
+    ampm = map(lambda h: h = "{}{}".format((h if h < 12 \
+        else h - 12), ("am" if h < 12 else "pm")), hours)
 
-    sHours = checkPrompt(createCronHourPrompt(hours, ampm), "Hours")
-    if noHours(sHours): return
+    s_hours = check_prompt(create_cron_hour_prompt(hours, ampm), "Hours")
+    if no_hours(s_hours): return
 
-    for _ in sHours:
+    for _ in s_hours:
         job.hour.also.on(_)
 
     cronroot.write()
-    insertCron(job)
+    insert_cron(job)
 
 
-def cronRun():
+def cronrun():
     tasks = list(zip(args.msgs, args.ids))
     for _ in tasks:
         body = (open(_[0])).read()
-        _url = "{}/{}".format(url.base, url.addMsg(id, body))
+        _url = "{}/{}".format(url.base, url.add_msg(id, body))
         post(_url, auth)
 
 
-def getLm(id, c = get("{}/{}".format(url.base, id[0]), auth)):
+def getlm(id, c = get("{}/{}".format(url.base, id[0]), auth)):
     context = c["context_name"].strip()
     lm = c["last_authored_message"][0:25].replace("\n", " ").strip()
     return "{}: {}...".format(context, lm)
@@ -437,15 +494,15 @@ if arg.selection == "send": send()
     case "compose": compose()
     case "list":
         match args.type:
-            case "jobs": listJobs()
-            case "ids": listIds()
+            case "jobs": list_jobs()
+            case "ids": list_ids()
     case "remove":
         match args.type:
-            case "jobs": removeJobs()
-            case "ids": removeIds()
+            case "jobs": remove_jobs()
+            case "ids": remove_ids()
     case "schedule": schedule()
     case "sched": schedule()
-    case "run": cronRun()
+    case "run": cronrun()
 
 con.commit()
 con.close()
