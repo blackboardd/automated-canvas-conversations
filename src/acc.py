@@ -42,7 +42,7 @@ class User:
     os = platform.system()
     
     if user.os == "Linux":
-        ospath = dict(shared="~/.local/share/automated-canvas-conversations")
+        ospath = dict(shared="~/.local/share/canvas-cli")
     else:
         ospath = dict(shared="")
 

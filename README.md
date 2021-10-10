@@ -1,12 +1,12 @@
-# Automated / CLI Canvas Conversations
+<h1 align="center">Canvas CLI</h1>
 
-This is a small CLI application that allows you to append messages to existing conversation threads on Instructure Canvas as well as schedule them using crontab.
+<div align="center">
+
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/blackboardd/canvas-cli/blob/main/LICENSE) [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/) [![Follow on Twitter](https://img.shields.io/twitter/follow/blkboardd.svg?label=follow+blkboardd)](https://twitter.com/blkboardd)
+
+</div>
 
 ![example of usage in Canvas](/imgs/canvas_example.png)
-
-## Compatability
-
-This application currently does not run properly on Windows devices, but compatability is a feature that will be looked into.
 
 ## Dependencies
 
@@ -30,3 +30,11 @@ Do not forget to export your access token in ~/.bashrc.
 See what is happening in info.log
 
 ![example of usage in a terminal shell](/imgs/term_example.png)
+
+## 🧑‍🤝‍🧑 Contributing
+
+Read the [contributing guide](/docs/CONTRIBUTING.md) to learn about our development process, and how to craft proposals.
+
+## ⚖️ License
+
+This project is licensed under the terms of the [MIT license](/docs/LICENSE).
